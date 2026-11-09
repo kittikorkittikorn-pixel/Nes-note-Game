@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><title>MUSIC NOTE FALLING</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Music&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#070b1f;--p:#141c44;--a:#5eead4;--b:#a78bfa;--t:#eef2ff;--m:#8b93b8;--r:#fb7185;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0}[hidden]{display:none!important}
+body{background:radial-gradient(circle at 50% 0,#1d2766,#070b1f 65%) #070b1f;color:var(--t);font:15px/1.4 Prompt,system-ui,sans-serif;display:flex;justify-content:center}
+button{font:inherit;color:var(--t);background:var(--p);border:1px solid #2c3777;border-radius:10px;padding:8px 10px;cursor:pointer}
+button:hover{border-color:var(--a)}button:focus-visible{outline:2px solid var(--a)}
+#app{box-sizing:border-box;width:100%;max-width:920px;height:100%;display:flex;flex-direction:column;gap:8px;padding:8px max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left))}
+#hud{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13px;color:var(--m)}#hud b{color:var(--t);font-size:16px}#hud button{padding:2px 8px;margin-left:auto}#hud button+button{margin-left:0}
+#wrap{position:relative;flex:1;min-height:0;border:1px solid #2c3777;border-radius:14px;overflow:hidden;background:#0a1030}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#fb{position:absolute;top:6%;left:0;right:0;text-align:center;font-size:clamp(24px,6vw,38px);font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}#fb.g{opacity:1;color:var(--a)}#fb.r{opacity:1;color:var(--r)}
+#ov{position:absolute;inset:0;background:rgba(7,11,31,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;overflow:auto;text-align:center}
+#ov h1{margin:0;font-size:clamp(26px,7vw,40px);line-height:1.1;letter-spacing:.04em;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+#ov h3{margin:4px 0 0}#ov p{margin:0;color:var(--m)}.hl{color:var(--a)!important}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:380px}.g2 button{display:flex;flex-direction:column;align-items:center}.g2 small{color:var(--m)}
+.chk{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center}
+.go{background:linear-gradient(90deg,#0f766e,#6d28d9);border:0;padding:10px 22px;font-weight:600}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:8px}.st div{background:var(--p);border-radius:10px;padding:8px 18px;color:var(--m)}.st b{display:block;font-size:24px;color:var(--t)}
+#ans{width:100%;box-sizing:border-box;font:600 20px Prompt,sans-serif;text-align:center;color:var(--t);background:#0a1030;border:1px solid #2c3777;border-radius:10px;padding:8px}
+#kb{position:relative;display:flex;gap:2px;height:clamp(96px,17vh,140px);margin-top:6px}#kb .wk{flex:1;background:#f4f6ff;color:#0a1030;border:0;border-radius:0 0 8px 8px;display:flex;align-items:flex-end;justify-content:center;padding:0 0 8px;font-size:16px;font-weight:600}#kb .wk:active{background:var(--a)}#kb .bk{position:absolute;top:0;width:9%;height:60%;background:#161b3f;border:1px solid #000;border-radius:0 0 6px 6px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 0 4px;z-index:1;font-size:10px;line-height:1.15;color:#cfd5ff}#kb .bk:active{background:var(--b)}
+#cr{text-align:right;font-size:11px;font-weight:300;letter-spacing:.02em;color:var(--m);margin:-4px 2px 0}
+#kb .wk.on{background:var(--a)}#kb .bk.on{background:var(--b)}#kb .bk b{font-size:12px;color:var(--a);margin-bottom:3px}
+body,button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}#kb{user-select:none;-webkit-user-select:none}
+html,body{overflow-x:hidden;overscroll-behavior:none}#ov{justify-content:safe center}
+@supports(height:100dvh){html{height:100dvh}}
+@media(max-width:480px){#hud{font-size:12px;gap:4px 8px}#hud b{font-size:14px}#kb .bk{font-size:9px}#kb .wk{font-size:14px}#ov{padding:10px;gap:6px}#ov h1{font-size:24px}#ans{padding:5px;font-size:16px}}
+@media(max-height:520px){#kb{height:64px}#ans{display:none}#hud{font-size:11px}#app{gap:4px}#kb .bk b{display:none}}
+</style></head><body>
+<div id="app">
+<div id="hud"><span>Score <b id="sc">0</b></span><span>Combo <b id="cb">0</b></span><span id="lv"></span><span>⏱ <b id="tm">0:00</b></span><span>Best <b id="hi">0</b></span><button id="snd" title="เพลงประกอบ">🎵</button><button id="mn" title="เมนู">☰</button></div>
+<div id="cr">สร้างโดย กิตติกร ทองอินทร์</div>
+<div id="wrap"><canvas id="cv"></canvas><div id="fb"></div><div id="ov"></div></div>
+<div id="ctl"><input id="ans" readonly placeholder="กดเปียโน หรือกดคีย์บอร์ด C–B และ 1–5 (คีย์ดำ)" aria-label="ชื่อโน้ต"><div id="kb"></div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),cv=$('cv'),cx=cv.getContext('2d'),ans=$('ans'),ov=$('ov'),fb=$('fb');
+const L='CDEFGAB',CL={treble:{n:'Treble',b:30,gl:'𝄞',r:2},bass:{n:'Bass',b:18,gl:'𝄢',r:6},alto:{n:'Alto',b:24,gl:'𝄡',r:4},tenor:{n:'Tenor',b:22,gl:'𝄡',r:6}};
+const LV={easy:{c:['treble'],sp:.8,x:0},normal:{c:['treble','bass'],sp:1,x:0},hard:{c:['treble','bass','alto','tenor'],sp:1.15,x:0},expert:{c:['treble','bass','alto','tenor'],sp:1.3,x:1}};
+const D={easy:'กุญแจซอล',normal:'ซอล + ฟา',hard:'+ กุญแจโด',expert:'เส้นน้อย + ♯♭'};
+const lg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ls=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+let S={m:'menu'},buf='',W=0,H=0,g=20,dpr=1,last=performance.now(),mus=1,mt,mi=0,AC,ft;
+const nm=n=>n.nm+(n.a=='#'?'♯':n.a=='b'?'♭':'');
+/* sound */
+function tn(f,d,ty,v,at=0){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.state=='suspended'&&AC.resume();const o=AC.createOscillator(),o2=AC.createGain(),t=AC.currentTime+at;o.type=ty;o.frequency.value=f;o2.gain.setValueAtTime(v,t);o2.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(o2);o2.connect(AC.destination);o.start(t);o.stop(t+d)}catch(e){}}
+const snd=k=>k=='ok'?(tn(660,.12,'sine',.2),tn(990,.22,'sine',.2,.1)):k=='no'?tn(150,.3,'sawtooth',.14):tn(880,.08,'square',.07);
+function music(){clearInterval(mt);if(!mus||S.m!='play')return;const sc=[0,3,5,7,10,7,5,3];mt=setInterval(()=>{tn(220*2**(sc[mi++%8]/12)*(mi%16<8?1:1.5),.5,'triangle',.05)},320)}
+/* game */
+function say(t,c){fb.textContent=t;fb.className=c;clearTimeout(ft);ft=setTimeout(()=>fb.className='',1100)}
+function start(mode,cfg){S={m:'play',mode,cfg,score:0,combo:0,lives:3,ok:0,bad:0,t:0,note:null,wait:.3,hi:cfg.prac?0:+(lg('mnf-'+mode)||0)};S.hi0=S.hi;ov.hidden=1;music()}
+function next(){const c=S.cfg,k=c.c[Math.random()*c.c.length|0],s=c.x?(Math.random()*15|0)-3:Math.random()*9|0,n=CL[k].b+s,nm=L[n%7];let a='';
+if(c.x&&Math.random()<.45){const o=[];if('CDFGA'.includes(nm))o.push('#');if('DEGAB'.includes(nm))o.push('b');a=o[Math.random()*o.length|0]}
+S.note={k,s,nm,a,p:0,warn:0};buf='';ans.value=''}
+function ok(){const n=S.note;S.note=null;S.ok++;S.combo++;S.score+=10+Math.min(S.combo-1,10)*2;S.hi=Math.max(S.hi,S.score);say('Correct!'+(S.cfg.prac?' = '+nm(n):''),'g');snd('ok');S.wait=.4+(S.cfg.prac?.7:0)}
+function bad(){S.bad++;S.combo=0;snd('no');say('Try Again!','r');if(!S.cfg.prac&&--S.lives<=0)end()}
+function miss(){const n=S.note;S.note=null;S.bad++;S.combo=0;snd('no');say('เฉลย = '+nm(n),'r');if(!S.cfg.prac&&--S.lives<=0)return end();S.wait=1.3}
+function sub(p){const n=S.note;if(!n)return;buf='';ans.value='';p==pc(n.nm,n.a)?ok():bad()}
+function press(k){if(S.m!='play'||!S.note)return;
+if(/^[a-gA-G]$/.test(k)&&!(k=='b'&&buf.length==1))buf=k.toUpperCase();
+else if(k=='b'||k=='-'||k=='♭'){if(buf.length==1)buf+='b'}
+else if(k=='#'||k=='+'||k=='♯'){if(buf.length==1)buf+='#'}
+else if(k=='Backspace'||k=='⌫')buf='';
+ans.value=buf.replace('#','♯').replace(/(.)b/,'$1♭');
+if(buf&&(k=='Enter'||(k!='Backspace'&&k!='⌫'&&(buf.length>1||!S.note.a))))hit(pc(buf[0],buf[1]))}
+function end(){const t=S.ok+S.bad,nh=!S.cfg.prac&&S.score>S.hi0;S.m='over';S.note=null;clearInterval(mt);if(nh)ls('mnf-'+S.mode,S.score);
+ov.hidden=0;ov.innerHTML=`<h1>Game Over</h1>${nh?'<p class="hl">🏆 New High Score!</p>':''}<div class="st"><div><b>${S.score}</b>คะแนนรวม</div><div><b>${S.ok}</b>ตอบถูก</div><div><b>${S.bad}</b>ตอบผิด</div><div><b>${t?Math.round(S.ok/t*100):0}%</b>ความแม่นยำ</div></div><button class="go" data-l="again">เล่นอีกครั้ง</button><button data-l="menu">เมนูหลัก</button>`}
+function menu(){S.m='menu';clearInterval(mt);ov.hidden=0;
+ov.innerHTML=`<h1>MUSIC NOTE<br>FALLING</h1><p>เกมฝึกอ่านโน้ตดนตรี · พิมพ์ชื่อโน้ตก่อนถึงเส้นแดง</p><div class="g2">${Object.keys(LV).map(k=>`<button data-l="${k}"><b>${k[0].toUpperCase()+k.slice(1)}</b><small>${D[k]}</small></button>`).join('')}</div><h3>Practice Mode</h3><div class="chk">${Object.keys(CL).map(k=>`<label><input type="checkbox" value="${k}" ${k=='treble'?'checked':''}> ${CL[k].n}</label>`).join('')}<label><input type="checkbox" id="px"> เส้นน้อย + ♯♭</label></div><label>ความเร็ว <input type="range" id="spd" min=".5" max="2" step=".1" value="1"></label><button class="go" data-l="prac">เริ่ม Practice</button>`}
+ov.onclick=e=>{const b=e.target.closest('button');if(!b)return;const l=b.dataset.l;
+if(l=='menu')menu();else if(l=='again')start(S.mode,S.cfg);
+else if(l=='prac'){let c=[...ov.querySelectorAll('.chk input[value]:checked')].map(i=>i.value);if(!c.length)c=['treble'];start('prac',{c,sp:+$('spd').value,x:$('px').checked?1:0,prac:1})}
+else if(LV[l])start(l,LV[l])}
+/* ui */
+const pc=(n,a)=>([0,2,4,5,7,9,11][L.indexOf(n)]+(a=='#'?1:a=='b'?-1:0)+12)%12;
+$('kb').innerHTML=[...L].map((k,i)=>`<button class="wk" data-p="${[0,2,4,5,7,9,11][i]}">${k}</button>`).join('')+[[1,'C♯','D♭',1],[2,'D♯','E♭',3],[4,'F♯','G♭',6],[5,'G♯','A♭',8],[6,'A♯','B♭',10]].map(([i,a,b,p],j)=>`<button class="bk" style="left:calc(${i}*100%/7 - 4.5%)" data-p="${p}"><b>${j+1}</b><span>${a}</span><span>${b}</span></button>`).join('');
+function hit(p){const b=document.querySelector(`#kb [data-p="${p}"]`);if(b){b.classList.add('on');setTimeout(()=>b.classList.remove('on'),160)}tn(261.63*2**(p/12),.5,'triangle',.18);if(S.m=='play'&&S.note)sub(p)}
+$('kb').onpointerdown=e=>{const b=e.target.closest('button');if(b){e.preventDefault();hit(+b.dataset.p)}};addEventListener('pointerdown',()=>tn(1,.01,'sine',.0001),{once:true});
+$('snd').onclick=()=>{mus=!mus;$('snd').textContent=mus?'🎵':'🔇';music()};$('mn').onclick=menu;
+addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||S.m!='play')return;if(/^[1-5]$/.test(e.key)){e.preventDefault();hit([1,3,6,8,10][e.key-1]);return}if(/^([a-gA-G#+\-=]|Enter|Backspace)$/.test(e.key)){e.preventDefault();press(e.key=='='?'#':e.key)}});
+function rs(){const r=cv.parentNode.getBoundingClientRect();dpr=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;g=Math.max(10,Math.min(W/13,H/14))}
+new ResizeObserver(rs).observe(cv.parentNode);rs();
+function hud(){$('sc').textContent=S.score;$('cb').textContent='x'+S.combo;$('lv').textContent=S.cfg.prac?'Practice ∞':'♥'.repeat(Math.max(S.lives,0))+' '+S.mode;$('tm').textContent=(S.t/60|0)+':'+String(S.t%60|0).padStart(2,'0');$('hi').textContent=S.hi}
+/* clefs: วาดด้วยเส้นเวกเตอร์ (หน่วย = ระยะห่างระหว่างเส้น) */
+const P=d=>new Path2D(d),dot=(c,x,y,r)=>{c.beginPath();c.arc(x,y,r,0,7);c.fill()},
+cc=c=>{c.fillRect(0,-2,.45,4);c.fillRect(.65,-2,.12,4);c.stroke(P('M1 -1.5C1.1 -2.05 2.3 -2.05 2.3 -1.1C2.3 -.5 1.5 -.1 .8 -.02'));c.stroke(P('M1 1.5C1.1 2.05 2.3 2.05 2.3 1.1C2.3 .5 1.5 .1 .8 .02'));dot(c,1,-1.5,.2);dot(c,1,1.5,.2)},
+CP={treble:c=>{c.stroke(P('M1 1.75C-.25 1.5 -.35 -.9 .55 -2.2C1.15 -3.1 1.65 -3.9 1.35 -4.6C1.5 -5 2.1 -4.2 1.7 -3.2C1.45 -2.7 1.05 -2.3 1 -1.6L1 1.8C1 2.4 .7 2.5 .35 2.25'));c.stroke(P('M1 1.75C2.4 1.8 2.7 -.7 1.4 -.85C.5 -.95 .45 .35 1 .45C1.35 .5 1.5 .1 1.2 -.1'));dot(c,.33,2.22,.24)},
+bass:c=>{c.fill(P('M0 0C-.1 -.9 1.4 -.95 1.55 .1C1.6 .9 .7 1.6 -.3 1.9C.9 1.5 1.15 .7 1.1 .1C1.05 -.55 .2 -.65 .1 -.1Z'));dot(c,.45,-.05,.33);dot(c,1.95,-.5,.17);dot(c,1.95,.5,.17)},alto:cc,tenor:cc};
+/* draw */
+function draw(){cx.setTransform(dpr,0,0,dpr,0,0);cx.clearRect(0,0,W,H);const dl=H-1.8*g;
+cx.strokeStyle='#fb7185';cx.lineWidth=2;cx.setLineDash([8,6]);cx.beginPath();cx.moveTo(0,dl);cx.lineTo(W,dl);cx.stroke();cx.setLineDash([]);
+const n=S.m=='play'&&S.note;if(!n)return;
+const cy=-5*g+n.p*(H-3.8*g+5*g),by=cy+2*g,x0=W*.06,x1=W*.94,nx=W*.62,ny=by-n.s*g/2,col=n.warn?'#fda4af':'#fff',cl=CL[n.k],ly=v=>by-v*g/2;
+cx.fillStyle='rgba(255,255,255,.04)';cx.fillRect(x0-6,by-6*g,x1-x0+12,9*g);
+cx.strokeStyle=col;cx.lineWidth=Math.max(1.2,g/12);cx.beginPath();for(let i=0;i<5;i++){cx.moveTo(x0,ly(i*2));cx.lineTo(x1,ly(i*2))}cx.stroke();
+cx.save();cx.translate(x0+g*.2,ly(cl.r));cx.scale(g,g);cx.fillStyle=cx.strokeStyle=col;cx.lineWidth=.2;cx.lineCap=cx.lineJoin='round';CP[n.k](cx);cx.restore();cx.textBaseline='alphabetic';
+cx.font=`12px Prompt,sans-serif`;cx.fillStyle='#8b93b8';cx.textAlign='right';cx.fillText(cl.n+' Clef',x1,by-4*g-g*.35);cx.textAlign='left';
+cx.strokeStyle=col;cx.beginPath();for(let l=-2;l>=n.s;l-=2){cx.moveTo(nx-g*1.1,ly(l));cx.lineTo(nx+g*1.1,ly(l))}for(let l=10;l<=n.s;l+=2){cx.moveTo(nx-g*1.1,ly(l));cx.lineTo(nx+g*1.1,ly(l))}cx.stroke();
+if(n.a){cx.fillStyle=col;cx.font=`${g*2}px "Noto Music","Segoe UI Symbol",serif`;cx.fillText(n.a=='#'?'♯':'♭',nx-g*2,ny+g*.55)}
+cx.fillStyle=col;cx.beginPath();cx.ellipse(nx,ny,g*.62,g*.45,-.35,0,7);cx.fill();
+cx.lineWidth=Math.max(1.5,g/10);cx.beginPath();if(n.s<4){cx.moveTo(nx+g*.57,ny-g*.1);cx.lineTo(nx+g*.57,ny-g*3.3)}else{cx.moveTo(nx-g*.57,ny+g*.1);cx.lineTo(nx-g*.57,ny+g*3.3)}cx.strokeStyle=col;cx.stroke()}
+function tick(ts){const dt=Math.min((ts-last)/1000,.05);last=ts;
+if(S.m=='play'){S.t+=dt;if(S.note){const n=S.note;n.p+=dt/(9/(S.cfg.sp*(1+Math.min(S.ok,40)*.02)));if(n.p>.78&&!n.warn){n.warn=1;snd('w')}if(n.p>=1)miss()}else if((S.wait-=dt)<=0)next();hud()}
+draw();requestAnimationFrame(tick)}
+(document.fonts&&document.fonts.load('40px "Noto Music"','𝄞♯')||Promise.resolve()).catch(()=>{});
+S.cfg={};S.mode='';S.score=0;S.combo=0;S.lives=3;S.t=0;S.hi=0;menu();hud();requestAnimationFrame(tick);
+</script></body></html>
